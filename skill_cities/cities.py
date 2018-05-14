@@ -51,11 +51,17 @@ def handle_dialog(request, response, user_storage):
 
         else:
             user_storage['try'] += 1
-            hint = cities_data[user_storage['city']][0]
+            hint = cities_data[user_storage['city']]
+            if user_storage['try'] == 3:
+                hint = '\n\nПервая буква - %s' % hint[0]
+            elif user_storage['try'] == 5:
+                hint = '\n\nНачало - %s' % hint[:2]
+            else:
+                hint = ''
             incorrect = choice(alice_static.answer_incorrect)
             response.set_text('{incorrect}\nПопробуй еще раз!{hint}'.format(
                 incorrect=incorrect,
-                hint='' if user_storage['try'] != 3 else '\n\nПервая буква - %s' % hint
+                hint=hint
             ))
 
     elif user_storage.get('state') == REPLY:
