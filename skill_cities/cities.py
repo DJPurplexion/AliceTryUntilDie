@@ -43,9 +43,6 @@ def handle_dialog(request, response, user_storage):
 
             addition = ''
 
-            if user_storage['wins'] > 1:
-                addition = '\n\n%s\n' % 'Вы угадали уже %s стран!' % user_storage['wins']
-
             response.set_text('{correct}{addition}\nЗагадать новый?'.format(
                 correct=correct,
                 addition=addition
