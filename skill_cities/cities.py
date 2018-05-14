@@ -1,12 +1,13 @@
 # coding: utf-8
 from __future__ import unicode_literals
+import json
 from random import choice
 
 WAIT = 0
 REPLY = 1
 
 
-cities_data = {}
+cities_data = json.load(open('big-city-data.json'))
 
 
 # Функция для непосредственной обработки диалога.
