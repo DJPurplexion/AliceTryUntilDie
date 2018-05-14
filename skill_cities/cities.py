@@ -34,7 +34,7 @@ def handle_dialog(request, response, user_storage):
 
     if user_storage.get('state') == WAIT:
         # Обрабатываем ответ пользователя.
-        if request.command.lower() in cities_data[user_storage['city']].lower():
+        if request.command.lower() == cities_data[user_storage['city']].lower():
             # Пользователь угадал.
             correct = choice(alice_static.answer_correct)
             response.set_text('{correct}\nЗагадать новый?'.format(correct=correct))
