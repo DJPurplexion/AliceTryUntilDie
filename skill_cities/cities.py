@@ -25,7 +25,8 @@ def handle_dialog(request, response, user_storage):
         user_storage = {
             'city': city,
             'state': WAIT,
-            'try': 0
+            'try': 0,
+            'wins': 0
         }
 
         response.set_text('Викторина началась!\n' + format_new_question(city))
@@ -34,10 +35,21 @@ def handle_dialog(request, response, user_storage):
 
     if user_storage.get('state') == WAIT:
         # Обрабатываем ответ пользователя.
-        if request.command.lower() in cities_data[user_storage['city']].lower():
+        if request.command.lower() == cities_data[user_storage['city']].lower():
             # Пользователь угадал.
+            user_storage['wins'] += 1
+
             correct = choice(alice_static.answer_correct)
-            response.set_text('{correct}\nЗагадать новый?'.format(correct=correct))
+
+            addition = ''
+
+            if user_storage['wins'] > 1:
+                addition = '\n\n%s\n' % 'Вы угадали уже %s стран!' % user_storage['wins']
+
+            response.set_text('{correct}{addition}\nЗагадать новый?'.format(
+                correct=correct,
+                addition=addition
+            ))
 
             buttons = [{
                 "title": "Да",
@@ -70,7 +82,8 @@ def handle_dialog(request, response, user_storage):
             user_storage = {
                 'city': city,
                 'state': WAIT,
-                'try': 0
+                'try': 0,
+                'wins': user_storage['wins']
             }
             response.set_text(format_new_question(city))
 
