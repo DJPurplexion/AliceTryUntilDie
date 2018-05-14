@@ -16,7 +16,7 @@ def handle_dialog(request, response, user_storage):
         # Это новый пользователь.
         # Инициализируем сессию и поприветствуем его.
 
-        city = choice(cities_data.keys())
+        city = choice(list(cities_data.keys()))
 
         user_storage = {
             # 'suggests': [
@@ -27,14 +27,15 @@ def handle_dialog(request, response, user_storage):
         }
 
         # buttons, user_storage = get_suggests(user_storage)
-        response.set_text('Привет! В какой стране находится город %s?' % city)
+        # FIXME
+        response.set_text('Привет! В какой стране находится город %s? (%s)' % (city, cities_data[city]))
         # response.set_buttons(buttons)
 
         return response, user_storage
 
     if user_storage.get('state') == WAIT:
         # Обрабатываем ответ пользователя.
-        if request.command.lower() in cities_data[user_storage['city']]:
+        if request.command.lower() in cities_data[user_storage['city']].lower():
             # Пользователь угадал.
             response.set_text('Правильно! Загадать новый?')
 
@@ -43,45 +44,33 @@ def handle_dialog(request, response, user_storage):
                 "hide": True
             }, {
                 "title": "Нет",
-                "hide": False
+                "hide": True
             }]
             response.set_buttons(buttons)
+            user_storage['state'] = REPLY
         else:
             response.set_text('Неправильно! Попробуй еще раз!')
     elif user_storage.get('state') == REPLY:
         if request.command.lower() == 'да':
-            city = choice(cities_data.keys())
+            city = choice(list(cities_data.keys()))
             user_storage = {
                 'city': city,
                 'state': WAIT
             }
-            response.set_text('Привет! В какой стране находится город %s?' % city)
+            # FIXME
+            response.set_text('В какой стране находится город %s? (%s)' % (city, cities_data[city]))
         elif request.command.lower() == 'нет':
-            request.set_end_session(True)
+            response.set_end_session(True)
+            response.set_text('Пока :)')
         else:
-            response.set_text('Алиса тобi не понимает :(')
-
+            buttons = [{
+                "title": "Да",
+                "hide": True
+            }, {
+                "title": "Нет",
+                "hide": True
+            }]
+            response.set_buttons(buttons)
+            response.set_text('Выбери один из двух вариантов - Да / Нет')
     return response, user_storage
 
-
-# Функция возвращает две подсказки для ответа.
-def get_suggests(user_storage):
-    # Выбираем две первые подсказки из массива.
-    suggests = [
-        {'title': suggest, 'hide': True}
-        for suggest in user_storage['suggests'][:2]
-    ]
-
-    # Убираем первую подсказку, чтобы подсказки менялись каждый раз.
-    user_storage['suggests'] = user_storage['suggests'][1:]
-
-    # Если осталась только одна подсказка, предлагаем подсказку
-    # со ссылкой на Яндекс.Маркет.
-    if len(suggests) < 2:
-        suggests.append({
-            "title": "Ладно",
-            "url": "https://market.yandex.ru/search?text=слон",
-            "hide": True
-        })
-
-    return suggests, user_storage

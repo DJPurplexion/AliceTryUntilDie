@@ -1,0 +1,5 @@
+GREETING = []
+ANSW_CORRECT = []
+ANSW_INCORR = []
+ASK = []
+GOODBYE = []
