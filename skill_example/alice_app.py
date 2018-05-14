@@ -42,5 +42,9 @@ def main():
     return alice_response.dumps()
 
 
+@app.route("/", methods=['GET'])
+def main_get():
+    return 'PLEASE POST'
+
 if __name__ == '__main__':
     app.run()
