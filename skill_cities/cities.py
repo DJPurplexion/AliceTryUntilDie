@@ -1,13 +1,17 @@
 # coding: utf-8
 from __future__ import unicode_literals
-import json
+import json, alice_static
 from random import choice
 
 WAIT = 0
 REPLY = 1
 
-
 cities_data = json.load(open('big-city-data.json'))
+
+
+def format_new_question(city):
+    question = choice(alice_static.questions)
+    return question.format(city=city)
 
 
 # Функция для непосредственной обработки диалога.
@@ -19,17 +23,12 @@ def handle_dialog(request, response, user_storage):
         city = choice(list(cities_data.keys()))
 
         user_storage = {
-            # 'suggests': [
-            #     "Загадать город"
-            # ]
             'city': city,
-            'state': WAIT
+            'state': WAIT,
+            'try': 0
         }
 
-        # buttons, user_storage = get_suggests(user_storage)
-        # FIXME
-        response.set_text('Привет! В какой стране находится город %s? (%s)' % (city, cities_data[city]))
-        # response.set_buttons(buttons)
+        response.set_text('Викторина началась!\n' + format_new_question(city))
 
         return response, user_storage
 
@@ -37,7 +36,8 @@ def handle_dialog(request, response, user_storage):
         # Обрабатываем ответ пользователя.
         if request.command.lower() in cities_data[user_storage['city']].lower():
             # Пользователь угадал.
-            response.set_text('Правильно! Загадать новый?')
+            correct = choice(alice_static.answer_correct)
+            response.set_text('{correct}\nЗагадать новый?'.format(correct=correct))
 
             buttons = [{
                 "title": "Да",
@@ -48,20 +48,31 @@ def handle_dialog(request, response, user_storage):
             }]
             response.set_buttons(buttons)
             user_storage['state'] = REPLY
+
         else:
-            response.set_text('Неправильно! Попробуй еще раз!')
+            user_storage['try'] += 1
+            hint = cities_data[user_storage['city']][0]
+            incorrect = choice(alice_static.answer_incorrect)
+            response.set_text('{incorrect}\nПопробуй еще раз!{hint}'.format(
+                incorrect=incorrect,
+                hint='' if user_storage['try'] != 3 else '\n\nПервая буква - %s' % hint
+            ))
+
     elif user_storage.get('state') == REPLY:
         if request.command.lower() == 'да':
             city = choice(list(cities_data.keys()))
             user_storage = {
                 'city': city,
-                'state': WAIT
+                'state': WAIT,
+                'try': 0
             }
-            # FIXME
-            response.set_text('В какой стране находится город %s? (%s)' % (city, cities_data[city]))
+            response.set_text(format_new_question(city))
+
         elif request.command.lower() == 'нет':
             response.set_end_session(True)
-            response.set_text('Пока :)')
+            goodbye = choice(alice_static.goodbye)
+            response.set_text(goodbye)
+
         else:
             buttons = [{
                 "title": "Да",
@@ -71,6 +82,6 @@ def handle_dialog(request, response, user_storage):
                 "hide": True
             }]
             response.set_buttons(buttons)
-            response.set_text('Выбери один из двух вариантов - Да / Нет')
-    return response, user_storage
+            response.set_text('Выбери один из двух вариантов - Да или Нет')
 
+    return response, user_storage
