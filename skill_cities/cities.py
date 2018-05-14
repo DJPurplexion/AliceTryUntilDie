@@ -2,6 +2,12 @@
 from __future__ import unicode_literals
 from random import choice
 
+WAIT = 0
+REPLY = 1
+
+
+cities_data = {}
+
 
 # Функция для непосредственной обработки диалога.
 def handle_dialog(request, response, user_storage):
@@ -9,29 +15,50 @@ def handle_dialog(request, response, user_storage):
         # Это новый пользователь.
         # Инициализируем сессию и поприветствуем его.
 
+        city = choice(cities_data.keys())
+
         user_storage = {
             # 'suggests': [
             #     "Загадать город"
             # ]
+            'city': city,
+            'state': WAIT
         }
 
-        buttons, user_storage = get_suggests(user_storage)
-        response.set_text('Привет! Todo')
-        response.set_buttons(buttons)
+        # buttons, user_storage = get_suggests(user_storage)
+        response.set_text('Привет! В какой стране находится город %s?' % city)
+        # response.set_buttons(buttons)
 
         return response, user_storage
 
-    # Обрабатываем ответ пользователя.
-    if request.command.lower() in ['ладно', 'куплю', 'покупаю', 'хорошо']:
-        # Пользователь согласился, прощаемся.
-        response.set_text('Слона можно найти на Яндекс.Маркете!')
+    if user_storage.get('state') == WAIT:
+        # Обрабатываем ответ пользователя.
+        if request.command.lower() in cities_data[user_storage['city']]:
+            # Пользователь угадал.
+            response.set_text('Правильно! Загадать новый?')
 
-        return response, user_storage
-
-    # Если нет, то убеждаем его купить слона!
-    buttons, user_storage = get_suggests(user_storage)
-    response.set_text('Все говорят "{}", а ты купи слона!'.format(request.command))
-    response.set_buttons(buttons)
+            buttons = [{
+                "title": "Да",
+                "hide": True
+            }, {
+                "title": "Нет",
+                "hide": False
+            }]
+            response.set_buttons(buttons)
+        else:
+            response.set_text('Неправильно! Попробуй еще раз!')
+    elif user_storage.get('state') == REPLY:
+        if request.command.lower() == 'да':
+            city = choice(cities_data.keys())
+            user_storage = {
+                'city': city,
+                'state': WAIT
+            }
+            response.set_text('Привет! В какой стране находится город %s?' % city)
+        elif request.command.lower() == 'нет':
+            request.set_end_session(True)
+        else:
+            response.set_text('Алиса тобi не понимает :(')
 
     return response, user_storage
 
