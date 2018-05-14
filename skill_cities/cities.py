@@ -41,11 +41,8 @@ def handle_dialog(request, response, user_storage):
 
             correct = choice(alice_static.answer_correct)
 
-            addition = ''
-
-            response.set_text('{correct}{addition}\nЗагадать новый?'.format(
-                correct=correct,
-                addition=addition
+            response.set_text('{correct}\nЗагадать новый?'.format(
+                correct=correct
             ))
 
             buttons = [{
