@@ -1,5 +1,6 @@
 # coding: utf-8
 from __future__ import unicode_literals
+from random import choice
 
 
 # Функция для непосредственной обработки диалога.
@@ -9,14 +10,13 @@ def handle_dialog(request, response, user_storage):
         # Инициализируем сессию и поприветствуем его.
 
         user_storage = {
-            'suggests': [
-                "Загадать город",
-                "Покажи ответ"
-            ]
+            # 'suggests': [
+            #     "Загадать город"
+            # ]
         }
 
         buttons, user_storage = get_suggests(user_storage)
-        response.set_text('Привет! Купи слона!')
+        response.set_text('Привет! Todo')
         response.set_buttons(buttons)
 
         return response, user_storage
