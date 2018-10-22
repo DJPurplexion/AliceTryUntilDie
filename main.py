@@ -1,6 +1,19 @@
 from __future__ import unicode_literals
 import json, alice_static
 from random import choice
+# Импортируем подмодули Flask для запуска веб-сервиса.
+from flask import Flask, request
+app = Flask(__name__)
+
+
+logging.basicConfig(level=logging.DEBUG)
+
+# Хранилище данных о сессиях.
+sessionStorage = {}
+
+# Задаем параметры приложения Flask.
+@app.route("/", methods=['POST'])
+
 def format_new_question(quest):
     question = choice(alice_static.questions)
     return question.format(quest=quest)
@@ -27,6 +40,7 @@ def timeynotwimey()
             #Выводим кнопочки
             user_storage['state'] = REPLY
             #Меняем состояние пользователя
+
 def handle_dialog(request, response, user_storage):
     if request.is_new_session:
           # Это новый пользователь.
