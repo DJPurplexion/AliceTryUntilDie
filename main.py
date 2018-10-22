@@ -4,9 +4,6 @@ from random import choice
 def format_new_question(quest):
     question = choice(alice_static.questions)
     return question.format(quest=quest)
-"""
-Установить requests
-"""
 def timeynotwimey()
             user_storage['try'] += 1
             timeup = choice(alice_static.answer_timeup)
@@ -39,7 +36,6 @@ def handle_dialog(request, response, user_storage):
 
           user_storage = {
               'quest': quest,
-              'team': team,
               'state': STOP,
               #STOP-вопрос не задан Wait-ожидается ответ Reply - ответ получен
               'wins': 0,
@@ -67,7 +63,6 @@ def handle_dialog(request, response, user_storage):
           quest = choice(list(quest_data.keys()))
           user_storage = {
               'quest': quest,
-              'team': user_storage['team'],
               'state': WAIT,
               'wins': user_storage['wins'],
               'tries': user_storage ['tries']
