@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import json, alice_static
+import logging
 from random import choice
 # Импортируем подмодули Flask для запуска веб-сервиса.
 from flask import Flask, request
