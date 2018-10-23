@@ -18,7 +18,7 @@ sessionStorage = {}
 def format_new_question(quest):
     question = choice(alice_static.questions)
     return question.format(quest=quest)
-def timeynotwimey()
+def timerout()
             user_storage['try'] += 1
             timeup = choice(alice_static.answer_timeup)
             right_answer=choice(alice_static.right_answer)
@@ -57,10 +57,7 @@ def handle_dialog(request, response, user_storage):
               'tries':0
          }
 
-          response.set_text('Вы готовы к викторине?')
-
           return response, user_storage
-    """
     if user_storage.get('state') == STOP:
       newquest = choice(alice_static.newquest)
       response.set_text('{newquest}\n{right_answer}{real_answer}\n{again}'.format(
@@ -93,10 +90,12 @@ def handle_dialog(request, response, user_storage):
               "hide": True
           }]
             response.set_buttons(buttons)
-          if request.command.lower() == 'нет':
-            ВСТАВИТЬ ДЕЙСТВИЕ
+          if request.command.lower() == 'нет': 
+            user_storage['state'] = STOP
           elif request.command.lower() == 'да':
-            ВСТАВИТЬ ДЕЙСТВИЕ выхода
+            response.set_end_session(True)
+            goodbye = choice(alice_static.goodbye)
+            response.set_text(goodbye)
           else:
             response.set_buttons(buttons)
             response.set_text ('Извините я не понимаю, вы хотите выйти?')
@@ -109,14 +108,11 @@ def handle_dialog(request, response, user_storage):
               "hide": True
           }]
             response.set_buttons(buttons)
-            response.set_text('Выбери один из двух вариантов - Да или Нет')   
-
-    Вставить задавание первого вопроса и переделать это
-    """"
+            response.set_text('Выбери один из двух вариантов - Да или Нет') 
     if user_storage.get('state') == WAIT:
         # Обрабатываем ответ пользователя.
-        timeywimey = Timer(30.0, timeynotwimey)
-        t.start()
+        timer = Timer(30.0, timerout)
+        timer.start()
         if request.command.lower() == quest_data[user_storage['answer']].lower():
             # Пользователь угадал.
             user_storage['wins'] += 1
@@ -166,9 +162,6 @@ def handle_dialog(request, response, user_storage):
             #Выводим кнопочки
             user_storage['state'] = REPLY
             #Меняем состояние пользователя
-    """
-    Разделитель для лучшей видимости
-    """
     elif user_storage.get('state') == REPLY:
         if request.command.lower() == 'да':
             quest = choice(list(quest_data.keys()))
