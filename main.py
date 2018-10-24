@@ -46,7 +46,7 @@ def handle_dialog(request, response, user_storage):
     if request.is_new_session:
           # Это новый пользователь.
           # Инициализируем сессию и поприветствуем его.
-          greetings = choice(alice_static.newquest)
+          greetings = choice(alice_static.greetings)
           
           user_storage = {
               'quest': quest,
