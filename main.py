@@ -166,7 +166,6 @@ def handle_dialog(request, response, user_storage):
             quest = choice(list(quest_data.keys()))
             user_storage = {
                 'quest': quest,
-                'team': user_storage['team'],
                 'state': WAIT,
                 'wins': user_storage['wins'],
                 'tries': user_storage ['tries']
