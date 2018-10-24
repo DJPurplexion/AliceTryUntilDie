@@ -56,10 +56,12 @@ def handle_dialog(request, response, user_storage):
               'tries':0
          }
 
-          response.set_text('{greetings}')
+          response.set_text('{greetings}'.format(
+                           greetings=greetings
+          ))
     if user_storage.get('state') == STOP:
       newquest = choice(alice_static.newquest)
-      response.set_text('{newquest}\n{right_answer}{real_answer}\n{again}'.format(
+      response.set_text('{newquest}'.format(
           newquest=newquest,
             ))
       buttons = [{
