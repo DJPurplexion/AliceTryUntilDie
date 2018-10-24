@@ -46,10 +46,8 @@ def handle_dialog(request, response, user_storage):
     if request.is_new_session:
           # Это новый пользователь.
           # Инициализируем сессию и поприветствуем его.
-
-          quest = choice(list(quest_data.keys()))
           greetings = choice(alice_static.newquest)
-
+          
           user_storage = {
               'quest': quest,
               'state': STOP,
@@ -58,7 +56,7 @@ def handle_dialog(request, response, user_storage):
               'tries':0
          }
 
-          response.set_text('{greetings}\n{quest}')
+          response.set_text('{greetings}')
     if user_storage.get('state') == STOP:
       newquest = choice(alice_static.newquest)
       response.set_text('{newquest}\n{right_answer}{real_answer}\n{again}'.format(
