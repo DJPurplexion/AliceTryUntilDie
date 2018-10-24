@@ -57,7 +57,7 @@ def handle_dialog(request, response, user_storage):
          }
 
           response.set_text('{greetings}'.format(
-                           greetings=greetings
+             greetings=greetings
           ))
     if user_storage.get('state') == STOP:
       newquest = choice(alice_static.newquest)
@@ -72,15 +72,15 @@ def handle_dialog(request, response, user_storage):
                 "hide": True
             }]
             response.set_buttons(buttons)
-      if request.command.lower() == 'да':
-          quest = choice(list(quest_data.keys()))
-          user_storage = {
-              'quest': quest,
-              'state': WAIT,
-              'wins': user_storage['wins'],
-              'tries': user_storage ['tries']
-            }
-          response.set_text(format_new_question(quest))
+        if request.command.lower() == 'да':
+            quest = choice(list(quest_data.keys()))
+            user_storage = {
+                'quest': quest,
+                'state': WAIT,
+                'wins': user_storage['wins'],
+                'tries': user_storage ['tries']
+              }
+            response.set_text(format_new_question(quest))
       elif request.command.lower() == 'нет':
           response.set_text("Желаете выйти?")
           buttons = [{
@@ -175,7 +175,9 @@ def handle_dialog(request, response, user_storage):
             response.set_text(format_new_question(quest))
 
         elif request.command.lower() == 'нет':
-             user_storage['state'] = STOP
+            response.set_end_session(True)
+            goodbye = choice(alice_static.goodbye)
+            response.set_text(goodbye)
         else:
             buttons = [{
                 "title": "Да",
